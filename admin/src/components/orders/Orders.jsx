@@ -60,67 +60,69 @@ const Orders = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        <div className="orders-table-wrapper">
 
-        <table className="orders-table">
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Customer</th>
-              <th>Total</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Date</th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {filteredOrders.map((order) => (
-              <React.Fragment key={order.id}>
-                {/* Order Row */}
-                <tr>
-                  <td>#ORD-{order.id}</td>
-                  <td>{order.customerName}</td>
-                  <td>₹{order.grandTotal}</td>
-                  <td>
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
+            <tbody>
+              {filteredOrders.map((order) => (
+                <React.Fragment key={order.id}>
+                  {/* Order Row */}
+                  <tr>
+                    <td>#ORD-{order.id}</td>
+                    <td>{order.customerName}</td>
+                    <td>₹{order.grandTotal}</td>
+                    <td>
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
 
-                {/* Items */}
-                <tr className="order-items-row">
-                  <td colSpan="4">
-                    <table className="items-table">
-                      <thead>
-                        <tr>
-                          <th>Product</th>
-                          <th>Seller</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                          <th>Total</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {order.items.map((item) => (
-                          <tr key={item.id}>
-                            <td>{item.materialName}</td>
-                            <td>{item.seller?.name || "-"}</td>
-                            <td>{item.quantity}</td>
-                            <td>₹{item.pricePerUnit}</td>
-                            <td>₹{item.totalAmount}</td>
-                            <td>
-                              <span className="badge success">
-                                {item.status}
-                              </span>
-                            </td>
+                  {/* Items */}
+                  <tr className="order-items-row">
+                    <td colSpan="4">
+                      <table className="items-table">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                            <th>Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
+                        </thead>
+                        <tbody>
+                          {order.items.map((item) => (
+                            <tr key={item.id}>
+                              <td>{item.materialName}</td>
+                              <td>{item.seller?.name || "-"}</td>
+                              <td>{item.quantity}</td>
+                              <td>₹{item.pricePerUnit}</td>
+                              <td>₹{item.totalAmount}</td>
+                              <td>
+                                <span className="badge success">
+                                  {item.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredOrders.length === 0 && (
           <div className="empty-state">No orders found</div>

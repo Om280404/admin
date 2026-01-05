@@ -58,22 +58,25 @@ const ContactMessages = () => {
         </div>
 
         {/* Table */}
-        <table className="contact-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Message</th>
-              <th>Date</th>
-            </tr>
-          </thead>
+        <div className="table-scroll">
 
-          <tbody>
-            {filteredMessages.map((m) => (
-              <MessageRow key={m.id} message={m} />
-            ))}
-          </tbody>
-        </table>
+          <table className="contact-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredMessages.map((m) => (
+                <MessageRow key={m.id} message={m} />
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredMessages.length === 0 && (
           <div className="empty-state">No messages found</div>

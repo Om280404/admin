@@ -60,7 +60,7 @@
   background: #fff;
   padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
   transition: all 0.25s ease;
 }
 
@@ -80,7 +80,7 @@
 
 .stat-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
 }
 
 /* ==============================
@@ -93,7 +93,7 @@
   background: #fff;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
 }
 
 .sellers-table th,
@@ -187,12 +187,17 @@
   color: #7b7b74;
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
 /* ==============================
    RESPONSIVE
 ============================== */
+/* @media (min-width: 1024px) {
+  .sellers-page {
+    padding-left: 250px;
+  }
+} */
 
 @media (max-width: 768px) {
   .sellers-page {
@@ -206,7 +211,8 @@
   }
 
   .seller-search {
-    width: 100%;
+    width: 96%;
+    margin-bottom: 10px;
   }
 
   .actions {
@@ -216,4 +222,91 @@
   table {
     font-size: 13px;
   }
+}
+
+/* ==============================
+   RESPONSIVE TABLE FIX
+============================== */
+
+
+/* Ensure table keeps its structure */
+@media (max-width: 768px) {
+  .sellers-table {
+    min-width: 680px;
+    /* allows horizontal scroll */
+  }
+}
+
+/* Small phones */
+@media (max-width: 425px) {
+  .sellers-table {
+    min-width: 640px;
+  }
+}
+
+/* ==============================
+   PAGE RESPONSIVENESS
+============================== */
+
+@media (max-width: 1024px) {
+  .sellers-page {
+    padding: 24px;
+    padding-left: 260px;
+    /* sidebar overlay */
+  }
+}
+
+@media (max-width: 768px) {
+  .sellers-page {
+    padding: 16px;
+    padding-top: 80px;
+    /* space for hamburger */
+  }
+}
+
+@media (max-width: 768px) {
+  .sellers-header h1 {
+    font-size: 22px;
+  }
+
+  .sellers-header p {
+    font-size: 13px;
+  }
+
+  .seller-search {
+    font-size: 14px;
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .sellers-table th,
+  .sellers-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .status {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+}
+
+/* ==============================
+   TABLE SCROLL FIX (MOBILE SAFE)
+============================== */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;               /* ✅ table scrolls */
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+}
+
+.sellers-table {
+  width: 100%;
+  min-width: 720px;   /* critical */
+  border-collapse: collapse;
 }

@@ -110,3 +110,17 @@
   color: #7b7b74;
   font-size: 13px;
 }
+
+@media (max-width: 768px){
+  .user-details-page{
+    padding-left: 10px;
+    padding-top: 70px;
+  }
+}
+
+@media (max-width: 426px){
+  .user-profile{
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -8,6 +8,7 @@
   background: #f5f4ee;
   min-height: 100vh;
   font-family: "Helvetica", Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 /* =========================
@@ -18,6 +19,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .designers-header h1 {
@@ -28,6 +31,7 @@
 .designers-header p {
   margin-top: 6px;
   color: #7b7b74;
+  font-size: 14px;
 }
 
 /* =========================
@@ -65,7 +69,7 @@
   padding: 20px;
   border-radius: 14px;
   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
-  transition: all 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .stat-card h3 {
@@ -88,16 +92,25 @@
 }
 
 /* =========================
+   TABLE WRAPPER (IMPORTANT)
+========================= */
+
+.designers-table-wrapper {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================
    DESIGNERS TABLE
 ========================= */
 
 .designers-table {
   width: 100%;
+  min-width: 900px; /* 👈 ensures horizontal scroll on mobile */
   border-collapse: collapse;
-  background: #fff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
 }
 
 .designers-table th,
@@ -105,6 +118,7 @@
   padding: 14px 16px;
   font-size: 14px;
   text-align: left;
+  white-space: nowrap;
 }
 
 .designers-table th {
@@ -173,11 +187,6 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.actions button:hover {
-  opacity: 0.9;
 }
 
 .actions .danger {
@@ -205,29 +214,47 @@
 }
 
 /* =========================
-   RESPONSIVE
+   MOBILE RESPONSIVE
 ========================= */
 
 @media (max-width: 768px) {
   .designers-page {
-    padding-left: 0;
+    padding: 16px;
+    padding-top: 72px; /* space for hamburger */
   }
 
   .designers-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
   }
 
   .designer-search {
-    width: 100%;
+    width: 96%;
   }
 
-  table {
+  .designers-table {
+    min-width: 760px;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 425px) {
+  .designers-page {
+    padding: 14px;
+    padding-top: 64px;
+  }
+
+  .designers-table {
+    min-width: 720px;
+  }
+
+  .designers-table th,
+  .designers-table td {
+    padding: 10px 12px;
     font-size: 13px;
-  }
-
-  .actions {
-    flex-direction: column;
   }
 }

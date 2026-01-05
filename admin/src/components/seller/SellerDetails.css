@@ -132,6 +132,7 @@
   .seller-details-page {
     margin-left: 0;
     padding: 20px;
+    padding-left: 260px;
   }
 
   .admin-actions {
@@ -140,5 +141,12 @@
 
   .admin-actions button {
     width: 100%;
+  }
+}
+
+@media (max-width: 1024px){
+  .seller-details-page{
+    padding-top: 50px;
+    padding-left: 0px;
   }
 }

@@ -130,75 +130,97 @@ const Dashboard = () => {
           {/* Orders & Revenue */}
           <div className="chart-card full-width">
             <h3 className="chart-title">Orders & Revenue</h3>
+            <div className="chart-container">
 
-            <ResponsiveContainer width="100%" aspect={3}>
-              <LineChart data={ordersOverTime}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#efefef" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip />
-                <Legend />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="orders"
-                  stroke={COLORS[0]}
-                  strokeWidth={2}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke={COLORS[3]}
-                  strokeWidth={2}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+              <ResponsiveContainer width="100%" aspect={3}>
+                <LineChart data={ordersOverTime}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#efefef" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="orders"
+                    stroke={COLORS[0]}
+                    strokeWidth={2}
+                  />
+                  <Line
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke={COLORS[3]}
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* Returns */}
           <div className="chart-card">
             <h3 className="chart-title">Returns by Status</h3>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" aspect={3}>
+                <BarChart data={returnsByStatus}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#efefef" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value">
+                    {returnsByStatus.map((_, idx) => (
+                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-            <ResponsiveContainer width="100%" aspect={3}>
-              <BarChart data={returnsByStatus}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#efefef" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value">
-                  {returnsByStatus.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
           </div>
 
           {/* Platform Mix */}
           <div className="chart-card">
             <h3 className="chart-title">Platform Composition</h3>
 
-            <ResponsiveContainer width="100%" aspect={3}>
-              <PieChart>
-                <Pie
-                  data={platformMix}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={4}
-                >
-                  {platformMix.map((_, idx) => (
-                    <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" aspect={3}>
+                <PieChart>
+                  <Pie
+                    data={platformMix}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={32}
+                    outerRadius={64}
+                    paddingAngle={4}
+                    labelLine={false}
+                  >
+                    {platformMix.map((_, idx) => (
+                      <Cell
+                        key={idx}
+                        fill={PIE_COLORS[idx % PIE_COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+
+                  {/* ✅ Hover tooltip */}
+                  <Tooltip
+                    formatter={(value, name) => [`${value}`, name]}
+                  />
+
+                  {/* Legend */}
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    wrapperStyle={{ fontSize: 12 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
+
         </div>
 
       </div>

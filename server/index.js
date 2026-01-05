@@ -338,7 +338,22 @@ app.get("/admin/sellers/:id", async (req, res) => {
 
   if (!seller) return res.status(404).json({ error: "Seller not found" });
 
-  res.json(seller);
+  res.json({
+    id: seller.id,
+    status: seller.phoneVerified ? "VERIFIED" : "PENDING",
+
+    seller: {
+      name: seller.name,
+      email: seller.email,
+      phone: seller.phone,
+      createdAt: seller.createdAt,
+    },
+
+    business: seller.business,
+    delivery: seller.delivery,
+    bank: seller.bank,
+  });
+
 });
 
 /* ======================
@@ -501,12 +516,12 @@ app.get("/admin/contact-messages", async (req, res) => {
     const messages = await prisma.contactMessage.findMany({
       where: search
         ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { email: { contains: search, mode: "insensitive" } },
-              { message: { contains: search, mode: "insensitive" } },
-            ],
-          }
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { message: { contains: search, mode: "insensitive" } },
+          ],
+        }
         : undefined,
 
       orderBy: { createdAt: "desc" },

@@ -76,76 +76,78 @@ const Designers = () => {
         {loading ? (
           <p>Loading designers...</p>
         ) : (
-          <table className="designers-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Location</th>
-                <th>Experience</th>
-                <th>Subscription</th>
-                <th>Availability</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredDesigners.map((d) => (
-                <tr key={d.id}>
-                  <td>{d.fullname}</td>
-                  <td>{d.location}</td>
-                  <td>{d.experience}</td>
-
-                  <td>
-                    <span
-                      className={`badge ${d.subscriptionStatus === "PAID" ? "success" : "pending"
-                        }`}
-                    >
-                      {d.subscriptionStatus}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span
-                      className={`badge ${d.availability === "AVAILABLE" ? "success" : "pending"
-                        }`}
-                    >
-                      {d.availability}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span className={`status ${d.status.toLowerCase()}`}>
-                      {d.status}
-                    </span>
-                  </td>
-
-                  <td>
-                    <button
-                      className="btn-view"
-                      onClick={() =>
-                        navigate("/designer-works", {
-                          state: { designerId: d.id },
-                        })
-                      }
-                    >
-                      View Works
-                    </button>
-                  </td>
-
-
+          <div className="designers-table-wrapper">
+            <table className="designers-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Location</th>
+                  <th>Experience</th>
+                  <th>Subscription</th>
+                  <th>Availability</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {filteredDesigners.map((d) => (
+                  <tr key={d.id}>
+                    <td>{d.fullname}</td>
+                    <td>{d.location}</td>
+                    <td>{d.experience}</td>
+
+                    <td>
+                      <span
+                        className={`badge ${d.subscriptionStatus === "PAID" ? "success" : "pending"
+                          }`}
+                      >
+                        {d.subscriptionStatus}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        className={`badge ${d.availability === "AVAILABLE" ? "success" : "pending"
+                          }`}
+                      >
+                        {d.availability}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span className={`status ${d.status.toLowerCase()}`}>
+                        {d.status}
+                      </span>
+                    </td>
+
+                    <td>
+                      <button
+                        className="btn-view"
+                        onClick={() =>
+                          navigate("/designer-works", {
+                            state: { designerId: d.id },
+                          })
+                        }
+                      >
+                        View Works
+                      </button>
+                    </td>
+
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
-        {!loading && filteredDesigners.length === 0 && (
-          <div className="empty-state">No designers found</div>
-        )}
-      </div>
+            {!loading && filteredDesigners.length === 0 && (
+              <div className="empty-state">No designers found</div>
+            )}
+          </div>
     </>
-  );
+      );
 };
 
-export default Designers;
+      export default Designers;

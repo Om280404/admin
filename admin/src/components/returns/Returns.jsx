@@ -171,98 +171,99 @@ const Returns = () => {
         {loading ? (
           <div className="loading-box">Loading returns…</div>
         ) : (
-          <table className="returns-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>User</th>
-                <th>Seller</th>
-                <th>Seller Approval</th>
-                <th>Admin Approval</th>
-                <th>Refund</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+          <div className="table-scroll">
+            <table className="returns-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product</th>
+                  <th>User</th>
+                  <th>Seller</th>
+                  <th>Seller Approval</th>
+                  <th>Admin Approval</th>
+                  <th>Refund</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
 
-            <tbody>
-              {filtered.map((r) => {
-                const fullyApproved =
-                  r.sellerApprovalStatus === "APPROVED" &&
-                  r.adminApprovalStatus === "APPROVED";
+              <tbody>
+                {filtered.map((r) => {
+                  const fullyApproved =
+                    r.sellerApprovalStatus === "APPROVED" &&
+                    r.adminApprovalStatus === "APPROVED";
 
-                return (
-                  <tr key={r.id}>
-                    <td>#RET-{r.id}</td>
-                    <td>{r.productName}</td>
-                    <td>{r.userName}</td>
-                    <td>{r.sellerName}</td>
+                  return (
+                    <tr key={r.id}>
+                      <td>#RET-{r.id}</td>
+                      <td>{r.productName}</td>
+                      <td>{r.userName}</td>
+                      <td>{r.sellerName}</td>
 
-                    <td>
-                      <span
-                        className={`badge ${r.sellerApprovalStatus.toLowerCase()}`}
-                      >
-                        {r.sellerApprovalStatus}
-                      </span>
-                    </td>
+                      <td>
+                        <span
+                          className={`badge ${r.sellerApprovalStatus.toLowerCase()}`}
+                        >
+                          {r.sellerApprovalStatus}
+                        </span>
+                      </td>
 
-                    <td>
-                      <span
-                        className={`badge ${r.adminApprovalStatus.toLowerCase()}`}
-                      >
-                        {r.adminApprovalStatus}
-                      </span>
-                    </td>
+                      <td>
+                        <span
+                          className={`badge ${r.adminApprovalStatus.toLowerCase()}`}
+                        >
+                          {r.adminApprovalStatus}
+                        </span>
+                      </td>
 
-                    <td>
-                      ₹{r.refundAmount || 0}{" "}
-                      <span
-                        className={`badge ${
-                          r.refundStatus === "COMPLETED"
-                            ? "success"
-                            : "pending"
-                        }`}
-                      >
-                        {r.refundStatus || "PENDING"}
-                      </span>
-                    </td>
+                      <td>
+                        ₹{r.refundAmount || 0}{" "}
+                        <span
+                          className={`badge ${r.refundStatus === "COMPLETED"
+                              ? "success"
+                              : "pending"
+                            }`}
+                        >
+                          {r.refundStatus || "PENDING"}
+                        </span>
+                      </td>
 
-                    <td className="actions">
-                      {r.adminApprovalStatus === "PENDING" && (
-                        <>
-                          <button
-                            className="success"
-                            onClick={() => handleApprove(r.id)}
-                            disabled={actionLoading[r.id]}
-                          >
-                            Approve
-                          </button>
-                          <button
-                            className="danger"
-                            onClick={() => handleReject(r.id)}
-                            disabled={actionLoading[r.id]}
-                          >
-                            Reject
-                          </button>
-                        </>
-                      )}
-
-                      {fullyApproved &&
-                        r.refundStatus !== "COMPLETED" && (
-                          <button
-                            className="success"
-                            onClick={() => handleRefund(r.id)}
-                            disabled={actionLoading[r.id]}
-                          >
-                            Mark Refunded
-                          </button>
+                      <td className="actions">
+                        {r.adminApprovalStatus === "PENDING" && (
+                          <>
+                            <button
+                              className="success"
+                              onClick={() => handleApprove(r.id)}
+                              disabled={actionLoading[r.id]}
+                            >
+                              Approve
+                            </button>
+                            <button
+                              className="danger"
+                              onClick={() => handleReject(r.id)}
+                              disabled={actionLoading[r.id]}
+                            >
+                              Reject
+                            </button>
+                          </>
                         )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+
+                        {fullyApproved &&
+                          r.refundStatus !== "COMPLETED" && (
+                            <button
+                              className="success"
+                              onClick={() => handleRefund(r.id)}
+                              disabled={actionLoading[r.id]}
+                            >
+                              Mark Refunded
+                            </button>
+                          )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
 
         {!loading && filtered.length === 0 && (

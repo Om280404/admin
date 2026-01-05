@@ -83,9 +83,16 @@ const SellerDetails = () => {
 
                 <section className="section">
                     <h2>Business Details</h2>
-                    <p><strong>Type:</strong> {seller.business.sellerType || "-"}</p>
-                    <p><strong>City:</strong> {seller.business.city || "-"}</p>
-                    <p><strong>GST:</strong> {seller.business.gst || "-"}</p>
+
+                    {seller.business ? (
+                        <>
+                            <p><strong>Type:</strong> {seller.business.sellerType || "-"}</p>
+                            <p><strong>City:</strong> {seller.business.city || "-"}</p>
+                            <p><strong>GST:</strong> {seller.business.gst || "-"}</p>
+                        </>
+                    ) : (
+                        <p className="muted">Business details not provided</p>
+                    )}
                 </section>
 
                 <section className="section">
@@ -107,20 +114,6 @@ const SellerDetails = () => {
                     )}
                 </section>
 
-
-                <section className="section">
-                    <h2>Business Details</h2>
-
-                    {seller.business ? (
-                        <>
-                            <p><strong>Type:</strong> {seller.business.sellerType || "-"}</p>
-                            <p><strong>City:</strong> {seller.business.city || "-"}</p>
-                            <p><strong>GST:</strong> {seller.business.gst || "-"}</p>
-                        </>
-                    ) : (
-                        <p className="muted">Business details not provided</p>
-                    )}
-                </section>
 
             </div>
         </>

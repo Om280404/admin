@@ -33,6 +33,7 @@ const Sellers = () => {
       <Sidebar />
 
       <div className="sellers-page">
+        {/* Header */}
         <div className="sellers-header">
           <div>
             <h1>Sellers</h1>
@@ -48,50 +49,58 @@ const Sellers = () => {
           />
         </div>
 
+        {/* Content */}
         {loading ? (
-          <p>Loading sellers...</p>
+          <div className="loading-state">Loading sellers…</div>
         ) : (
           <>
-            <table className="sellers-table">
-              <thead>
-                <tr>
-                  <th>Business</th>
-                  <th>Owner</th>
-                  <th>City</th>
-                  <th>Status</th>
-                  <th>Joined</th>
-                  <th>View</th>
-                </tr>
-              </thead>
+            <div className="table-wrap">
+              <div className="table-scroll">
 
-              <tbody>
-                {filteredSellers.map((s) => (
-                  <tr key={s.id}>
-                    <td>{s.businessName}</td>
-                    <td>{s.ownerName}</td>
-                    <td>{s.city}</td>
-                    <td>
-                      <span className={`status ${s.status.toLowerCase()}`}>
-                        {s.status}
-                      </span>
-                    </td>
-                    <td>{new Date(s.joinedAt).toLocaleDateString()}</td>
-                    <td>
-                      <button
-                        className="btn-view"
-                        onClick={() =>
-                          navigate("/sellerdetails", {
-                            state: { sellerId: s.id },
-                          })
-                        }
-                      >
-                        View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                <table className="sellers-table">
+                  <thead>
+                    <tr>
+                      <th>Business</th>
+                      <th>Owner</th>
+                      <th>City</th>
+                      <th>Status</th>
+                      <th>Joined</th>
+                      <th>View</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {filteredSellers.map((s) => (
+                      <tr key={s.id}>
+                        <td className="cell-strong">{s.businessName}</td>
+                        <td>{s.ownerName}</td>
+                        <td>{s.city || "-"}</td>
+                        <td>
+                          <span className={`status ${s.status.toLowerCase()}`}>
+                            {s.status}
+                          </span>
+                        </td>
+                        <td>
+                          {new Date(s.joinedAt).toLocaleDateString()}
+                        </td>
+                        <td>
+                          <button
+                            className="btn-view"
+                            onClick={() =>
+                              navigate("/sellerdetails", {
+                                state: { sellerId: s.id },
+                              })
+                            }
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
             {filteredSellers.length === 0 && (
               <div className="empty-state">No sellers found</div>
