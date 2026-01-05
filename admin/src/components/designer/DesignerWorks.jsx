@@ -1,0 +1,159 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Sidebar from "../sidebar/Sidebar";
+import "./DesignerWorks.css";
+
+const DesignerWorks = () => {
+  const { state } = useLocation();
+  const designerId = state?.designerId;
+
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!designerId) return;
+
+    fetch(`http://localhost:5000/admin/designers/${designerId}/work-history`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch work history");
+        return res.json();
+      })
+      .then(setData)
+      .catch((err) => {
+        console.error(err);
+        setError(err.message);
+      })
+      .finally(() => setLoading(false));
+  }, [designerId]);
+
+  if (!designerId) {
+    return (
+      <>
+        <Sidebar />
+        <div className="designer-works-page">
+          <p>No designer selected.</p>
+        </div>
+      </>
+    );
+  }
+
+  if (loading) {
+    return (
+      <>
+        <Sidebar />
+        <div className="designer-works-page">Loading work history…</div>
+      </>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <>
+        <Sidebar />
+        <div className="designer-works-page">
+          <p style={{ color: "red" }}>{error || "No data found"}</p>
+        </div>
+      </>
+    );
+  }
+
+  const { designer, portfolioWorks, projectHistory } = data;
+
+  return (
+    <>
+      <Sidebar />
+
+      <div className="designer-works-page">
+        {/* ======================
+            DESIGNER HEADER
+        ====================== */}
+        <div className="designer-header">
+          <h1>{designer.fullname}</h1>
+          <p>{designer.email}</p>
+        </div>
+
+        {/* ======================
+            DESIGNER PROFILE
+        ====================== */}
+        <div className="designer-profile">
+          <p><strong>Location:</strong> {designer.location || "-"}</p>
+          <p><strong>Experience:</strong> {designer.experience}</p>
+          <p><strong>Availability:</strong> {designer.availability}</p>
+        </div>
+
+        {/* ======================
+            PORTFOLIO WORKS
+        ====================== */}
+        <section className="section">
+          <h2>Portfolio Works</h2>
+
+          {portfolioWorks.length === 0 ? (
+            <p>No portfolio works uploaded.</p>
+          ) : (
+            <div className="works-grid">
+              {portfolioWorks.map((work) => (
+                <div key={work.id} className="work-card">
+                  <img src={work.image} alt="Designer work" />
+                  <p className="work-desc">
+                    {work.description || "No description"}
+                  </p>
+                  <span className="work-date">
+                    {new Date(work.createdAt).toDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ======================
+            PROJECT HISTORY
+        ====================== */}
+        <section className="section">
+          <h2>Project History</h2>
+
+          {projectHistory.length === 0 ? (
+            <p>No projects yet.</p>
+          ) : (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Work Type</th>
+                  <th>Budget</th>
+                  <th>Status</th>
+                  <th>Rating</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {projectHistory.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.clientName}</td>
+                    <td>{p.workType}</td>
+                    <td>₹{p.budget}</td>
+                    <td>
+                      <span className={`badge ${p.status}`}>
+                        {p.status}
+                      </span>
+                    </td>
+                    <td>
+                      {p.rating ? `⭐ ${p.rating}` : "—"}
+                    </td>
+                    <td>
+                      {new Date(p.createdAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      </div>
+    </>
+  );
+};
+
+export default DesignerWorks;

@@ -1,0 +1,40 @@
+.designer-works-page {
+  margin-left: 220px;
+  padding: 32px;
+}
+
+.works-header h1 {
+  margin: 0;
+}
+
+.works-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.work-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.work-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.work-card p {
+  padding: 12px;
+  font-size: 14px;
+}
+
+.work-card .date {
+  padding: 0 12px 12px;
+  display: block;
+  font-size: 12px;
+  color: #777;
+}

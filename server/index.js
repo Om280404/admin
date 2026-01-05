@@ -1,0 +1,530 @@
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import { PrismaClient } from "@prisma/client";
+
+dotenv.config();
+
+const app = express();
+const prisma = new PrismaClient();
+
+/* ======================
+   MIDDLEWARE
+====================== */
+app.use(
+  cors({
+    origin: "http://localhost:4000", // Admin frontend
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+
+/* ======================
+   HEALTH
+====================== */
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", service: "admin-backend" });
+});
+
+/* ======================
+   DASHBOARD
+====================== */
+// admin/dashboard (replace existing route implementation)
+app.get("/admin/dashboard", async (req, res) => {
+  try {
+    // base counts
+    const [
+      totalUsers,
+      totalSellers,
+      totalDesigners,
+      totalOrders,
+      completedRefunds,
+    ] = await Promise.all([
+      prisma.user.count(),
+      prisma.seller.count(),
+      prisma.designer.count(),
+      prisma.order.count(),
+      prisma.returnRequest.count({ where: { refundStatus: "COMPLETED" } }),
+    ]);
+
+    // === returnsByStatus (your existing logic) ===
+    const allReturns = await prisma.returnRequest.findMany({
+      select: { sellerApprovalStatus: true, adminApprovalStatus: true },
+    });
+
+    const pendingReturns = allReturns.filter(
+      (r) =>
+        r.sellerApprovalStatus === "PENDING" ||
+        r.adminApprovalStatus === "PENDING"
+    ).length;
+
+    const returnsByStatus = [
+      {
+        name: "REQUESTED",
+        value: allReturns.filter((r) => r.adminApprovalStatus === "PENDING")
+          .length,
+      },
+      {
+        name: "APPROVED",
+        value: allReturns.filter(
+          (r) =>
+            r.sellerApprovalStatus === "APPROVED" &&
+            r.adminApprovalStatus === "APPROVED"
+        ).length,
+      },
+      {
+        name: "REJECTED",
+        value: allReturns.filter(
+          (r) =>
+            r.sellerApprovalStatus === "REJECTED" ||
+            r.adminApprovalStatus === "REJECTED"
+        ).length,
+      },
+    ];
+
+    // === completedOrders ===
+    // "Completed" = orders where EVERY order item has status === 'fulfilled'.
+    // If you want "any item fulfilled" instead, change `every` to `some`.
+    const completedOrders = await prisma.order.count({
+      where: {
+        items: {
+          every: { status: "fulfilled" },
+        },
+      },
+    });
+
+    // === ordersOverTime (last 30 days) ===
+    const SINCE = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const recentOrders = await prisma.order.findMany({
+      where: { createdAt: { gte: SINCE } },
+      select: { createdAt: true, grandTotal: true },
+      orderBy: { createdAt: "asc" },
+    });
+
+    // aggregate per-day (YYYY-MM-DD)
+    const map = {};
+    recentOrders.forEach((o) => {
+      const day = o.createdAt.toISOString().slice(0, 10);
+      if (!map[day]) map[day] = { date: day, orders: 0, revenue: 0 };
+      map[day].orders += 1;
+      map[day].revenue += Number(o.grandTotal ?? 0);
+    });
+    const ordersOverTime = Object.values(map);
+
+    // === platformMix: small sample to populate pie chart ===
+    const platformMix = [
+      { name: "Users", value: totalUsers },
+      { name: "Sellers", value: totalSellers },
+      { name: "Designers", value: totalDesigners },
+    ];
+
+    res.json({
+      stats: {
+        totalUsers,
+        totalSellers,
+        totalDesigners,
+        totalOrders,
+        pendingReturns,
+        completedRefunds,
+        completedOrders, // new
+      },
+      ordersOverTime,
+      returnsByStatus,
+      platformMix,
+    });
+  } catch (err) {
+    console.error("❌ DASHBOARD ERROR:", err);
+    res.status(500).json({ error: "Dashboard load failed" });
+  }
+});
+
+
+
+
+/* ======================
+   USERS
+====================== */
+app.get("/admin/users", async (req, res) => {
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      credit: true,
+      createdAt: true,
+    },
+  });
+
+  res.json(users);
+});
+
+app.get("/admin/users/:id", async (req, res) => {
+  const id = Number(req.params.id);
+
+  const user = await prisma.user.findUnique({
+    where: { id },
+    include: {
+      orders: true,
+      returnRequests: {
+        select: {
+          id: true,
+          productName: true,
+          reason: true,
+          sellerApprovalStatus: true,
+          adminApprovalStatus: true,
+          refundStatus: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  res.json(user);
+});
+
+/* ======================
+   SELLERS
+====================== */
+app.get("/admin/sellers", async (req, res) => {
+  const sellers = await prisma.seller.findMany({
+    include: {
+      business: true,
+      delivery: true,
+      bank: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  res.json(
+    sellers.map((s) => ({
+      id: s.id,
+      ownerName: s.name,
+      email: s.email,
+      phone: s.phone,
+      city: s.business?.city || "-",
+      status: s.phoneVerified ? "VERIFIED" : "PENDING",
+      joinedAt: s.createdAt,
+    }))
+  );
+});
+
+/* ======================
+   DESIGNERS (ADMIN)
+====================== */
+app.get("/admin/designers", async (req, res) => {
+  try {
+    const designers = await prisma.designer.findMany({
+      include: {
+        profile: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const formatted = designers.map((d) => ({
+      id: d.id,
+      fullname: d.fullname,
+      location: d.location || "-",
+      experience: d.profile?.experience || "-",
+
+      // ✅ these fields ACTUALLY exist
+      availability:
+        d.availability?.toUpperCase() === "AVAILABLE"
+          ? "AVAILABLE"
+          : "UNAVAILABLE",
+
+      subscriptionStatus: "FREE", // placeholder (no column yet)
+      status: "ACTIVE",           // placeholder (no column yet)
+
+      createdAt: d.createdAt,
+    }));
+
+    res.json(formatted);
+  } catch (err) {
+    console.error("❌ ADMIN FETCH DESIGNERS ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch designers" });
+  }
+});
+
+/* ======================
+   DESIGNER WORK HISTORY (ADMIN)
+====================== */
+app.get("/admin/designers/:id/work-history", async (req, res) => {
+  try {
+    const designerId = Number(req.params.id);
+    if (isNaN(designerId)) {
+      return res.status(400).json({ error: "Invalid designer ID" });
+    }
+
+    /* ======================
+       FETCH DESIGNER
+    ====================== */
+    const designer = await prisma.designer.findUnique({
+      where: { id: designerId },
+      include: {
+        profile: true,
+      },
+    });
+
+    if (!designer) {
+      return res.status(404).json({ error: "Designer not found" });
+    }
+
+    /* ======================
+       FETCH PORTFOLIO WORKS
+    ====================== */
+    const portfolioWorks = await prisma.designerWork.findMany({
+      where: { designerId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    /* ======================
+       FETCH PROJECT HISTORY
+    ====================== */
+    const projectHistoryRaw = await prisma.designerHireRequest.findMany({
+      where: { designerId },
+      include: {
+        rating: true, // designerRating
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const projectHistory = projectHistoryRaw.map((p) => ({
+      id: p.id,
+      clientName: p.fullName,
+      workType: p.workType,
+      budget: p.budget,
+      status: p.status,
+      rating: p.rating?.stars || null,
+      createdAt: p.createdAt,
+    }));
+
+    /* ======================
+       RESPONSE
+    ====================== */
+    res.json({
+      designer: {
+        fullname: designer.fullname,
+        email: designer.email,
+        location: designer.location || "-",
+        experience: designer.profile?.experience || "-",
+        availability: designer.availability || "UNAVAILABLE",
+      },
+      portfolioWorks,
+      projectHistory,
+    });
+  } catch (err) {
+    console.error("❌ DESIGNER WORK HISTORY ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch work history" });
+  }
+});
+
+
+app.get("/admin/sellers/:id", async (req, res) => {
+  const id = Number(req.params.id);
+
+  const seller = await prisma.seller.findUnique({
+    where: { id },
+    include: {
+      business: true,
+      delivery: true,
+      bank: true,
+    },
+  });
+
+  if (!seller) return res.status(404).json({ error: "Seller not found" });
+
+  res.json(seller);
+});
+
+/* ======================
+   ORDERS
+====================== */
+app.get("/admin/orders", async (req, res) => {
+  const orders = await prisma.order.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      items: {
+        include: { seller: true },
+      },
+    },
+  });
+
+  res.json(orders);
+});
+
+/* ======================
+   RETURNS (ADMIN)
+====================== */
+app.get("/admin/returns", async (req, res) => {
+  try {
+    const returns = await prisma.returnRequest.findMany({
+      include: {
+        user: {
+          select: { name: true, email: true },
+        },
+        orderItem: {
+          select: {
+            sellerId: true,
+            seller: {
+              select: { name: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const formatted = returns.map((r) => {
+      // ✅ DERIVED STATUS (NO status COLUMN USED)
+      let derivedStatus = "REQUESTED";
+
+      if (r.adminApprovalStatus === "REJECTED") {
+        derivedStatus = "REJECTED";
+      } else if (
+        r.sellerApprovalStatus === "APPROVED" &&
+        r.adminApprovalStatus === "APPROVED"
+      ) {
+        derivedStatus = "APPROVED";
+      }
+
+      return {
+        id: r.id,
+        productName: r.productName,
+        userName: r.user?.name || "-",
+        sellerName: r.orderItem?.seller?.name || "-",
+        reason: r.reason,
+
+        status: derivedStatus,
+
+        sellerApprovalStatus: r.sellerApprovalStatus,
+        adminApprovalStatus: r.adminApprovalStatus,
+
+        refundMethod: r.refundMethod,
+        refundAmount: r.refundAmount ?? 0,
+        refundStatus: r.refundStatus,
+
+        requestedAt: r.createdAt,
+      };
+    });
+
+    res.json(formatted);
+  } catch (err) {
+    console.error("❌ ADMIN FETCH RETURNS ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch returns" });
+  }
+});
+
+
+
+app.patch("/admin/returns/:id/approve", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    await prisma.returnRequest.update({
+      where: { id },
+      data: {
+        adminApprovalStatus: "APPROVED",
+        adminApprovedAt: new Date(),
+      },
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("ADMIN APPROVE ERROR:", err);
+    res.status(500).json({ error: "Approve failed" });
+  }
+});
+
+
+app.patch("/admin/returns/:id/reject", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    await prisma.returnRequest.update({
+      where: { id },
+      data: {
+        adminApprovalStatus: "REJECTED",
+        adminApprovedAt: new Date(),
+      },
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("ADMIN REJECT ERROR:", err);
+    res.status(500).json({ error: "Reject failed" });
+  }
+});
+
+
+app.patch("/admin/returns/:id/refund", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+
+    const rr = await prisma.returnRequest.findUnique({ where: { id } });
+    if (!rr) return res.status(404).json({ error: "Return not found" });
+
+    if (
+      rr.sellerApprovalStatus !== "APPROVED" ||
+      rr.adminApprovalStatus !== "APPROVED"
+    ) {
+      return res.status(400).json({
+        error: "Seller & Admin must approve first",
+      });
+    }
+
+    const updated = await prisma.returnRequest.update({
+      where: { id },
+      data: {
+        refundStatus: "COMPLETED",
+      },
+    });
+
+    res.json({ success: true, updated });
+  } catch (err) {
+    console.error("REFUND ERROR:", err);
+    res.status(500).json({ error: "Refund failed" });
+  }
+});
+
+/* ======================
+   CONTACT MESSAGES (ADMIN)
+====================== */
+app.get("/admin/contact-messages", async (req, res) => {
+  try {
+    const search = req.query.search?.trim() || "";
+
+    const messages = await prisma.contactMessage.findMany({
+      where: search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+              { message: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
+
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(messages);
+  } catch (err) {
+    console.error("❌ FETCH CONTACT MESSAGES ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch messages" });
+  }
+});
+
+
+
+/* ======================
+   SERVER
+====================== */
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`🚀 Admin server running on http://localhost:${PORT}`);
+});

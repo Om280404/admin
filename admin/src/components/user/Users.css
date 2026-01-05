@@ -1,0 +1,140 @@
+/* Page */
+.users-page {
+  padding: 32px;
+  padding-left: 250px;
+  background: #f5f4ee;
+  min-height: 100vh;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+
+/* Header */
+.users-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #2f2f2f;
+}
+
+.users-header p {
+  margin-top: 6px;
+  color: #7b7b74;
+}
+
+/* Stats */
+.users-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #7b7b74;
+}
+
+.stat-card span {
+  display: block;
+  margin-top: 10px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #606e52;
+}
+
+/* Table */
+.users-table-wrapper {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  background: #fbfdf9;
+  text-align: left;
+  padding: 16px;
+  font-size: 13px;
+  color: #7b7b74;
+}
+
+.users-table td {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+  color: #2f2f2f;
+}
+
+/* Status */
+.status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status.active {
+  background: #e6edd8;
+  color: #5b6a4f;
+}
+
+.status.blocked {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* Buttons */
+.btn-view {
+  background: #606e52;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-view:hover {
+  background: #4f5d44;
+}
+
+/* Search bar */
+.user-search {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  width: 280px;
+  background: #fff;
+}
+
+.user-search:focus {
+  outline: none;
+  border-color: #606e52;
+  box-shadow: 0 0 0 2px rgba(96, 110, 82, 0.15);
+}
+
+/* Header alignment */
+.users-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  color: #7b7b74;
+}

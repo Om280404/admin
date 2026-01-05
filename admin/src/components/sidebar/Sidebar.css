@@ -1,0 +1,61 @@
+:root{
+    --brand-font: "CaviarDreams", sans-serif;
+    --body-font: "Helvetica", sans-serif;
+}
+
+@font-face {
+    font-family: "CaviarDreams";
+    src: url("/public/fonts/CaviarDreams.ttf") format("truetype");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "CaviarDreams";
+    src: url("/public/fonts/CaviarDreams_Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-display: swap;
+}
+
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #606e52;
+  color: #fff;
+  padding: 24px 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  font-family: var(--body-font);
+}
+
+.sidebar-logo {
+  margin: 0 0 30px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-family: var(--brand-font);
+}
+
+/* Navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.sidebar-nav a:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-nav a.active {
+  background: rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+}

@@ -1,0 +1,112 @@
+.user-details-page {
+  padding: 32px;
+  padding-left: 250px;
+  background: #f5f4ee;
+  min-height: 100vh;
+  font-family: "Helvetica", Arial, sans-serif;
+}
+
+/* Header */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-header h1 {
+  margin: 0;
+}
+
+.user-status {
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-status.active {
+  background: #e6edd8;
+  color: #5b6a4f;
+}
+
+/* Profile */
+.user-profile {
+  background: #fff;
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+}
+
+/* Sections */
+.section {
+  margin-top: 40px;
+}
+
+.section h2 {
+  margin-bottom: 16px;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.06);
+}
+
+.table th {
+  background: #fbfdf9;
+  padding: 14px;
+  text-align: left;
+  font-size: 13px;
+  color: #7b7b74;
+}
+
+.table td {
+  padding: 14px;
+  border-top: 1px solid #eee;
+  font-size: 14px;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.success {
+  background: #e6edd8;
+  color: #5b6a4f;
+}
+
+.badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge.warning {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* Ratings */
+.rating-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.muted {
+  color: #7b7b74;
+  font-size: 13px;
+}
