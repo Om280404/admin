@@ -116,8 +116,8 @@ const Returns = () => {
      FILTER
   ============================ */
   const filtered = returnsList.filter((r) =>
-    `${r.id} ${r.productName} ${r.userName} ${r.sellerName} 
-     ${r.sellerApprovalStatus} ${r.adminApprovalStatus}`
+    `${r.id} ${r.productName} ${r.userName} ${r.userMobile} ${r.sellerName}
+   ${r.sellerApprovalStatus} ${r.adminApprovalStatus}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -178,6 +178,7 @@ const Returns = () => {
                   <th>ID</th>
                   <th>Product</th>
                   <th>User</th>
+                  <th>Mobile</th>
                   <th>Seller</th>
                   <th>Seller Approval</th>
                   <th>Admin Approval</th>
@@ -197,6 +198,7 @@ const Returns = () => {
                       <td>#RET-{r.id}</td>
                       <td>{r.productName}</td>
                       <td>{r.userName}</td>
+                      <td>{r.userMobile || "-"}</td>
                       <td>{r.sellerName}</td>
 
                       <td>
@@ -219,8 +221,8 @@ const Returns = () => {
                         ₹{r.refundAmount || 0}{" "}
                         <span
                           className={`badge ${r.refundStatus === "COMPLETED"
-                              ? "success"
-                              : "pending"
+                            ? "success"
+                            : "pending"
                             }`}
                         >
                           {r.refundStatus || "PENDING"}

@@ -25,10 +25,11 @@ const Orders = () => {
   }, []);
 
   const filteredOrders = orders.filter((o) =>
-    `${o.id} ${o.customerName}`
+    `${o.id} ${o.user?.name || ""} ${o.user?.phone || ""}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
+
 
   if (loading) {
     return (
@@ -55,7 +56,7 @@ const Orders = () => {
           <input
             type="text"
             className="order-search"
-            placeholder="Search by order id or customer"
+            placeholder="Search by order id/ customer/ phone no"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -67,6 +68,7 @@ const Orders = () => {
               <tr>
                 <th>Order</th>
                 <th>Customer</th>
+                <th>Phone</th>
                 <th>Total</th>
                 <th>Date</th>
               </tr>
@@ -79,6 +81,7 @@ const Orders = () => {
                   <tr>
                     <td>#ORD-{order.id}</td>
                     <td>{order.customerName}</td>
+                    <td>{order.user?.phone || "-"}</td>
                     <td>₹{order.grandTotal}</td>
                     <td>
                       {new Date(order.createdAt).toLocaleDateString()}

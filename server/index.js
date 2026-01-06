@@ -229,18 +229,18 @@ app.get("/admin/designers", async (req, res) => {
     const formatted = designers.map((d) => ({
       id: d.id,
       fullname: d.fullname,
+      email: d.email,
+      phone: d.mobile || "-",
       location: d.location || "-",
       experience: d.profile?.experience || "-",
 
-      // ✅ these fields ACTUALLY exist
       availability:
         d.availability?.toUpperCase() === "AVAILABLE"
           ? "AVAILABLE"
           : "UNAVAILABLE",
 
-      subscriptionStatus: "FREE", // placeholder (no column yet)
-      status: "ACTIVE",           // placeholder (no column yet)
-
+      subscriptionStatus: "FREE",
+      status: "ACTIVE",
       createdAt: d.createdAt,
     }));
 
@@ -250,6 +250,7 @@ app.get("/admin/designers", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch designers" });
   }
 });
+
 
 /* ======================
    DESIGNER WORK HISTORY (ADMIN)
@@ -364,6 +365,12 @@ app.get("/admin/orders", async (req, res) => {
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: "desc" },
     include: {
+      user: {
+        select: {
+          name: true,
+          phone: true,
+        },
+      },
       items: {
         include: { seller: true },
       },
@@ -381,7 +388,11 @@ app.get("/admin/returns", async (req, res) => {
     const returns = await prisma.returnRequest.findMany({
       include: {
         user: {
-          select: { name: true, email: true },
+          select: {
+            name: true,
+            email: true,
+            phone: true, // ✅
+          },
         },
         orderItem: {
           select: {
@@ -396,7 +407,6 @@ app.get("/admin/returns", async (req, res) => {
     });
 
     const formatted = returns.map((r) => {
-      // ✅ DERIVED STATUS (NO status COLUMN USED)
       let derivedStatus = "REQUESTED";
 
       if (r.adminApprovalStatus === "REJECTED") {
@@ -411,12 +421,13 @@ app.get("/admin/returns", async (req, res) => {
       return {
         id: r.id,
         productName: r.productName,
+
         userName: r.user?.name || "-",
+        userMobile: r.user?.phone || "-",
+
         sellerName: r.orderItem?.seller?.name || "-",
-        reason: r.reason,
 
         status: derivedStatus,
-
         sellerApprovalStatus: r.sellerApprovalStatus,
         adminApprovalStatus: r.adminApprovalStatus,
 

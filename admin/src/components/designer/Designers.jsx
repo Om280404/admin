@@ -29,7 +29,7 @@ const Designers = () => {
   }, []);
 
   const filteredDesigners = designers.filter((d) =>
-    `${d.fullname || ""} ${d.location || ""} ${d.availability || ""} ${d.status || ""} ${d.subscriptionStatus || ""}`
+    `${d.fullname || ""} ${d.email || ""} ${d.phone || ""} ${d.location || ""} ${d.availability || ""} ${d.status || ""}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -50,7 +50,7 @@ const Designers = () => {
           <input
             type="text"
             className="designer-search"
-            placeholder="Search name, location, status"
+            placeholder="Search name, location, status, availability"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -81,6 +81,8 @@ const Designers = () => {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
                   <th>Location</th>
                   <th>Experience</th>
                   <th>Subscription</th>
@@ -94,6 +96,8 @@ const Designers = () => {
                 {filteredDesigners.map((d) => (
                   <tr key={d.id}>
                     <td>{d.fullname}</td>
+                    <td>{d.email || "-"}</td>
+                    <td>{d.phone || "-"}</td>
                     <td>{d.location}</td>
                     <td>{d.experience}</td>
 
@@ -142,12 +146,12 @@ const Designers = () => {
           </div>
         )}
 
-            {!loading && filteredDesigners.length === 0 && (
-              <div className="empty-state">No designers found</div>
-            )}
-          </div>
+        {!loading && filteredDesigners.length === 0 && (
+          <div className="empty-state">No designers found</div>
+        )}
+      </div>
     </>
-      );
+  );
 };
 
-      export default Designers;
+export default Designers;
