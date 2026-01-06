@@ -88,37 +88,37 @@ const Dashboard = () => {
 
         {/* Stats */}
         <div className="dashboard-stats">
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Users</h3>
             <span>{stats.totalUsers}</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Sellers</h3>
             <span>{stats.totalSellers}</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Designers</h3>
             <span>{stats.totalDesigners}</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Orders</h3>
             <span>{stats.totalOrders}</span>
           </div>
 
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Completed Orders</h3>
             <span>{stats.completedOrders ?? stats.totalOrders}</span>
           </div>
 
-          <div className="stat-card warning">
+          <div className="stat_card warning">
             <h3>Pending Returns</h3>
             <span>{stats.pendingReturns}</span>
           </div>
 
-          <div className="stat-card success">
+          <div className="stat_card success">
             <h3>Completed Refunds</h3>
             <span>{stats.completedRefunds}</span>
           </div>

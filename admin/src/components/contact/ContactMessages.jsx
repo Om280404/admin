@@ -51,7 +51,7 @@ const ContactMessages = () => {
 
         {/* Stats */}
         <div className="contact-stats">
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Messages</h3>
             <span>{messages.length}</span>
           </div>

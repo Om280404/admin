@@ -58,15 +58,15 @@ const Designers = () => {
 
         {/* Stats */}
         <div className="designers-stats">
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total Designers</h3>
             <span>{designers.length}</span>
           </div>
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Paid Subscription</h3>
             <span>{designers.filter(d => d.subscriptionStatus === "PAID").length}</span>
           </div>
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Available</h3>
             <span>{designers.filter(d => d.availability === "AVAILABLE").length}</span>
           </div>

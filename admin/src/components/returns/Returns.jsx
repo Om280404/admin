@@ -145,11 +145,11 @@ const Returns = () => {
 
         {/* STATS */}
         <div className="returns-stats">
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Total</h3>
             <span>{returnsList.length}</span>
           </div>
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Seller Approved</h3>
             <span>
               {returnsList.filter(
@@ -157,7 +157,7 @@ const Returns = () => {
               ).length}
             </span>
           </div>
-          <div className="stat-card">
+          <div className="stat_card">
             <h3>Admin Approved</h3>
             <span>
               {returnsList.filter(

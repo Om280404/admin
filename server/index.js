@@ -204,6 +204,7 @@ app.get("/admin/sellers", async (req, res) => {
     sellers.map((s) => ({
       id: s.id,
       ownerName: s.name,
+      businessName: s.business?.businessName || "-",
       email: s.email,
       phone: s.phone,
       city: s.business?.city || "-",
