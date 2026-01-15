@@ -16,12 +16,6 @@ enum ReturnStatus {
   COMPLETED
 }
 
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
 enum RefundStatus {
   NONE
   PENDING
@@ -34,7 +28,11 @@ enum RefundMethod {
   ORIGINAL_PAYMENT
 }
 
-
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
 
 model User {
   id        Int      @id @default(autoincrement())
@@ -63,7 +61,6 @@ model CustomerOtp {
 
   @@index([email])
 }
-
 
 /// =========================
 /// SELLER (ACCOUNT)
@@ -137,15 +134,11 @@ model SellerDeliveryDetails {
 /// SELLER BANK DETAILS
 /// =========================
 model SellerBankDetails {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
+  upiId     String   @unique
 
-  accountHolder String
-  bankName      String
-  accountNumber String
-  ifsc          String
-
-  sellerId Int    @unique
-  seller   Seller @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId  Int      @unique
+  seller    Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }
@@ -225,7 +218,7 @@ model OrderItem {
   refundStatus      RefundStatus @default(NONE)
   refundProcessedAt DateTime?
 
-  // ✅ DELIVERY SNAPSHOT
+  //  DELIVERY SNAPSHOT
   deliveryTimeMin       Int?
   deliveryTimeMax       Int?
   shippingChargeType    String?
@@ -287,7 +280,6 @@ model DesignerOtp {
   @@index([email])
 }
 
-
 model DesignerProfile {
   id         Int @id @default(autoincrement())
   designerId Int @unique
@@ -337,7 +329,7 @@ model DesignerHireRequest {
   workType     String
   timelineDate DateTime?
   description  String?
-  status       String  @default("pending")
+  status       String    @default("pending")
 
   createdAt DateTime @default(now())
 
@@ -412,7 +404,6 @@ model ReturnRequest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 model ContactMessage {
   id        Int      @id @default(autoincrement())

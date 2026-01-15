@@ -325,38 +325,97 @@ app.get("/admin/designers/:id/work-history", async (req, res) => {
   }
 });
 
+/* ======================
+   CREATE / UPDATE UPI
+====================== */
+app.post("/seller/upi", async (req, res) => {
+  try {
+    const { sellerId, upiId } = req.body;
 
-app.get("/admin/sellers/:id", async (req, res) => {
-  const id = Number(req.params.id);
+    if (!sellerId || !upiId) {
+      return res.status(400).json({ error: "sellerId and upiId are required" });
+    }
 
-  const seller = await prisma.seller.findUnique({
-    where: { id },
-    include: {
-      business: true,
-      delivery: true,
-      bank: true,
-    },
-  });
+    const upiRegex = /^[\w.-]+@[\w.-]+$/;
+    if (!upiRegex.test(upiId)) {
+      return res.status(400).json({ error: "Invalid UPI format" });
+    }
 
-  if (!seller) return res.status(404).json({ error: "Seller not found" });
+    const upi = await prisma.sellerBankDetails.upsert({
+      where: { sellerId },
+      update: { upiId },
+      create: { sellerId, upiId },
+    });
 
-  res.json({
-    id: seller.id,
-    status: seller.phoneVerified ? "VERIFIED" : "PENDING",
-
-    seller: {
-      name: seller.name,
-      email: seller.email,
-      phone: seller.phone,
-      createdAt: seller.createdAt,
-    },
-
-    business: seller.business,
-    delivery: seller.delivery,
-    bank: seller.bank,
-  });
-
+    res.json({ success: true, upi });
+  } catch (err) {
+    console.error("UPSERT UPI ERROR:", err);
+    res.status(500).json({ error: "Failed to save UPI" });
+  }
 });
+
+/* ======================
+   DELETE UPI
+====================== */
+app.delete("/seller/:id/upi", async (req, res) => {
+  try {
+    const sellerId = Number(req.params.id);
+
+    await prisma.sellerBankDetails.delete({
+      where: { sellerId },
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("DELETE UPI ERROR:", err);
+    res.status(500).json({ error: "Failed to delete UPI" });
+  }
+});
+
+
+
+// GET SELLER DETAILS (ADMIN)
+app.get("/admin/sellers/:id", async (req, res) => {
+  try {
+    const sellerId = Number(req.params.id);
+    if (isNaN(sellerId)) {
+      return res.status(400).json({ error: "Invalid seller ID" });
+    }
+
+    const seller = await prisma.seller.findUnique({
+      where: { id: sellerId },
+      include: {
+        business: true,
+        delivery: true,
+        bank: true, // ✅ important
+      },
+    });
+
+    if (!seller) {
+      return res.status(404).json({ error: "Seller not found" });
+    }
+
+    res.json({
+      id: seller.id,
+      status: seller.phoneVerified ? "VERIFIED" : "PENDING",
+
+      seller: {
+        name: seller.name,
+        email: seller.email,
+        phone: seller.phone,
+        createdAt: seller.createdAt,
+      },
+
+      business: seller.business,
+      delivery: seller.delivery,
+      bank: seller.bank, // ✅ bank details
+    });
+  } catch (err) {
+    console.error("FETCH SELLER DETAILS ERROR:", err);
+    res.status(500).json({ error: "Failed to fetch seller details" });
+  }
+});
+
 
 /* ======================
    ORDERS
