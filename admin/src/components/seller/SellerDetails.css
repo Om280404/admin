@@ -3,7 +3,8 @@
 ================================ */
 
 .seller-details-page {
-  margin-left: 260px; /* sidebar width */
+  margin-left: 260px;
+  /* sidebar width */
   padding: 28px 32px;
   background: #f6f7fb;
   min-height: 100vh;
@@ -144,48 +145,105 @@
   }
 }
 
-@media (max-width: 1024px){
-  .seller-details-page{
+@media (max-width: 1024px) {
+  .seller-details-page {
     padding-top: 50px;
     padding-left: 0px;
   }
 }
 
 .seller-details-page {
-    padding: 20px;
-    margin-left: 260px; /* Adjust based on your sidebar width */
+  padding: 20px;
+  margin-left: 260px;
+  /* Adjust based on your sidebar width */
 }
 
 .details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
 
 .section {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .section h2 {
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 1.2rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.2rem;
 }
 
 .section p {
-    margin: 8px 0;
-    color: #555;
+  margin: 8px 0;
+  color: #555;
 }
 
 .bank-details-section {
-    border-left: 4px solid #2ecc71; /* Green accent to distinguish bank info */
+  border-left: 4px solid #2ecc71;
+  /* Green accent to distinguish bank info */
 }
 
-.status.verified { color: green; font-weight: bold; }
-.status.pending { color: orange; font-weight: bold; }
+.status.verified {
+  color: green;
+  font-weight: bold;
+}
+
+.status.pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.seller-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn-verify {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.btn-verify.verify {
+    background-color: #28a745;
+    color: white;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.btn-verify.verify:hover {
+    background-color: #218838;
+}
+
+.btn-verify.unverify {
+    background-color: #f8f9fa;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+}
+
+.btn-verify.unverify:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-verify:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.muted {
+    color: #6c757d;
+    font-style: italic;
+}

@@ -310,3 +310,45 @@
   min-width: 720px;   /* critical */
   border-collapse: collapse;
 }
+
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-verify-small {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 65px;
+}
+
+.btn-verify-small.verify {
+    background-color: #e6f4ea;
+    color: #1e7e34;
+}
+
+.btn-verify-small.verify:hover {
+    background-color: #1e7e34;
+    color: white;
+}
+
+.btn-verify-small.unverify {
+    background-color: #feeced;
+    color: #d73a49;
+}
+
+.btn-verify-small.unverify:hover {
+    background-color: #d73a49;
+    color: white;
+}
+
+.btn-verify-small:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

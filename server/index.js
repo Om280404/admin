@@ -14,6 +14,7 @@ const prisma = new PrismaClient();
 app.use(
   cors({
     origin: "http://localhost:4000", // Admin frontend
+    methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
     credentials: true,
   })
 );
@@ -208,10 +209,34 @@ app.get("/admin/sellers", async (req, res) => {
       email: s.email,
       phone: s.phone,
       city: s.business?.city || "-",
-      status: s.phoneVerified ? "VERIFIED" : "PENDING",
+      // Updated: Use isVerified for status
+      status: s.isVerified ? "VERIFIED" : "PENDING",
       joinedAt: s.createdAt,
     }))
   );
+});
+
+app.patch("/admin/designers/:id/verify", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { isVerified } = req.body;
+
+    if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
+
+    // Update the designer's verification status in the database
+    const updatedDesigner = await prisma.designer.update({
+      where: { id },
+      data: { isVerified: isVerified },
+    });
+
+    res.json({ 
+      success: true, 
+      isVerified: updatedDesigner.isVerified 
+    });
+  } catch (err) {
+    console.error("❌ DESIGNER VERIFY ERROR:", err);
+    res.status(500).json({ error: "Failed to update designer verification" });
+  }
 });
 
 /* ======================
@@ -220,9 +245,7 @@ app.get("/admin/sellers", async (req, res) => {
 app.get("/admin/designers", async (req, res) => {
   try {
     const designers = await prisma.designer.findMany({
-      include: {
-        profile: true,
-      },
+      include: { profile: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -233,14 +256,11 @@ app.get("/admin/designers", async (req, res) => {
       phone: d.mobile || "-",
       location: d.location || "-",
       experience: d.profile?.experience || "-",
-
-      availability:
-        d.availability?.toUpperCase() === "AVAILABLE"
-          ? "AVAILABLE"
-          : "UNAVAILABLE",
-
+      availability: d.availability?.toUpperCase() === "AVAILABLE" ? "AVAILABLE" : "UNAVAILABLE",
       subscriptionStatus: "FREE",
-      status: "ACTIVE",
+      // Logic: If isVerified is true, status is ACTIVE, else PENDING
+      status: d.isVerified ? "ACTIVE" : "PENDING",
+      isVerified: d.isVerified,
       createdAt: d.createdAt,
     }));
 
@@ -250,7 +270,6 @@ app.get("/admin/designers", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch designers" });
   }
 });
-
 
 /* ======================
    DESIGNER WORK HISTORY (ADMIN)
@@ -387,7 +406,7 @@ app.get("/admin/sellers/:id", async (req, res) => {
       include: {
         business: true,
         delivery: true,
-        bank: true, // ✅ important
+        bank: true, 
       },
     });
 
@@ -397,7 +416,9 @@ app.get("/admin/sellers/:id", async (req, res) => {
 
     res.json({
       id: seller.id,
-      status: seller.phoneVerified ? "VERIFIED" : "PENDING",
+      // Updated logic
+      status: seller.isVerified ? "VERIFIED" : "PENDING",
+      isVerified: seller.isVerified, 
 
       seller: {
         name: seller.name,
@@ -408,7 +429,7 @@ app.get("/admin/sellers/:id", async (req, res) => {
 
       business: seller.business,
       delivery: seller.delivery,
-      bank: seller.bank, // ✅ bank details
+      bank: seller.bank, 
     });
   } catch (err) {
     console.error("FETCH SELLER DETAILS ERROR:", err);
@@ -416,6 +437,33 @@ app.get("/admin/sellers/:id", async (req, res) => {
   }
 });
 
+/* ======================
+    VERIFY SELLER (ADMIN)
+====================== */
+// Ensure this is AFTER your middleware and BEFORE app.listen
+app.patch("/admin/sellers/:id/verify", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { isVerified } = req.body;
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+
+    const updatedSeller = await prisma.seller.update({
+      where: { id },
+      data: { isVerified: isVerified },
+    });
+
+    res.json({ 
+      success: true, 
+      status: updatedSeller.isVerified ? "VERIFIED" : "PENDING" 
+    });
+  } catch (err) {
+    console.error("❌ VERIFY ERROR:", err);
+    res.status(500).json({ error: "Failed to update verification status" });
+  }
+});
 
 /* ======================
    ORDERS
