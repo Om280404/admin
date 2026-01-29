@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs"; // Use bcryptjs as you installed it earlier
+import transporter from "./utils/transporter.js"; // Note the .js extension for ES Modules
 
 dotenv.config();
 
@@ -223,11 +225,50 @@ app.patch("/admin/designers/:id/verify", async (req, res) => {
 
     if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
 
-    // Update the designer's verification status in the database
+    // 1. Update the designer's verification status
     const updatedDesigner = await prisma.designer.update({
       where: { id },
       data: { isVerified: isVerified },
     });
+
+    // 2. Send Congratulations Email only if status is true
+    if (updatedDesigner.isVerified) {
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM,
+        to: updatedDesigner.email,
+        subject: "Your Professional Profile is Verified! | Core2Cover",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #f0f0f0; padding: 25px; border-radius: 12px; border-top: 5px solid #000;">
+            <h2 style="color: #1a1a1a;">Welcome to the Core2Cover Community!</h2>
+            <p>Hello ${updatedDesigner.fullname || 'Designer'},</p>
+            <p>Your professional profile has been **Verified**. You now have full access to our platform's designer features.</p>
+            
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h4 style="margin-top: 0;">What you can do now:</h4>
+              <ul style="padding-left: 20px;">
+                <li>Upload and showcase your portfolio works.</li>
+                <li>Receive direct work requests from customers.</li>
+                <li>Appear in our "Hire a Designer" search results.</li>
+              </ul>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://core2cover.vercel.app/designerlogin" 
+                 style="background-color: #000; color: #fff; padding: 14px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                 Access Designer Dashboard
+              </a>
+            </div>
+
+            <p style="font-size: 13px; color: #888;">
+              Questions? Reply to this email or reach us at team.core2cover@gmail.com.
+            </p>
+            <p style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px;">
+              Regards,<br/><strong>The Core2Cover Team</strong>
+            </p>
+          </div>
+        `,
+      });
+    }
 
     res.json({ 
       success: true, 
@@ -450,10 +491,40 @@ app.patch("/admin/sellers/:id/verify", async (req, res) => {
       return res.status(400).json({ error: "Invalid ID" });
     }
 
+    // 1. Update the seller status and get their email/name
     const updatedSeller = await prisma.seller.update({
       where: { id },
       data: { isVerified: isVerified },
     });
+
+    // 2. Only send email if the seller was just verified
+    if (updatedSeller.isVerified) {
+      await transporter.sendMail({
+        from: process.env.EMAIL_FROM, // Your system email
+        to: updatedSeller.email, // The seller's registered email
+        subject: "Congratulations! Your Core2Cover Account is Verified",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+            <h2 style="color: #2e7d32;">Account Verified!</h2>
+            <p>Hello ${updatedSeller.name || 'Seller'},</p>
+            <p>Great news! Your professional profile has been reviewed and approved by the Core2Cover team.</p>
+            <p>You can now log in to your dashboard to list products, manage inventory, and start selling.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="https://core2cover.vercel.app/sellerlogin" 
+                 style="background-color: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                 Login to Seller Dashboard
+              </a>
+            </div>
+
+            <p style="font-size: 14px; color: #666;">
+              If you have any questions, feel free to reach out to us at team.core2cover@gmail.com.
+            </p>
+            <p style="margin-top: 20px;">Best regards,<br/><strong>Team Core2Cover</strong></p>
+          </div>
+        `,
+      });
+    }
 
     res.json({ 
       success: true, 
