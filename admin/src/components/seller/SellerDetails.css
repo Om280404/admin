@@ -201,49 +201,56 @@
 }
 
 .seller-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
 .btn-verify {
-    padding: 12px 24px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
 }
 
 .btn-verify.verify {
-    background-color: #28a745;
-    color: white;
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
 }
 
 .btn-verify.verify:hover {
-    background-color: #218838;
+  background-color: #218838;
 }
 
 .btn-verify.unverify {
-    background-color: #f8f9fa;
-    color: #dc3545;
-    border: 1px solid #dc3545;
+  background-color: #f8f9fa;
+  color: #dc3545;
+  border: 1px solid #dc3545;
 }
 
 .btn-verify.unverify:hover {
-    background-color: #dc3545;
-    color: white;
+  background-color: #dc3545;
+  color: white;
 }
 
 .btn-verify:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .muted {
-    color: #6c757d;
-    font-style: italic;
+  color: #6c757d;
+  font-style: italic;
+}
+
+@media (max-width: 769px) {
+  .seller-details-page {
+    margin-left: 0;
+    padding-top: 50px;
+  }
 }
